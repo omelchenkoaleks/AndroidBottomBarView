@@ -4,6 +4,8 @@ import android.graphics.Typeface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.viewpager2.widget.ViewPager2
+import com.omelchenkoaleks.myapplication.adapter.MyFragmentAdapter
 import com.skydoves.androidbottombar.AndroidBottomBarView
 import com.skydoves.androidbottombar.BottomMenuItem
 import com.skydoves.androidbottombar.OnBottomMenuInitializedListener
@@ -12,12 +14,17 @@ import com.skydoves.androidbottombar.OnMenuItemSelectedListener
 class MainActivity : AppCompatActivity() {
 
     private lateinit var mAndroidBottomBarView: AndroidBottomBarView
+    private lateinit var mViewPager2: ViewPager2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         mAndroidBottomBarView = findViewById(R.id.bottom_bar)
+        mViewPager2 = findViewById(R.id.pager)
+        val myFragmentAdapter = MyFragmentAdapter(this)
+        mViewPager2.adapter = myFragmentAdapter
+        mViewPager2.currentItem = 1 // Wy 1? Because in XML we default selected menu 1
 
         setupMenu()
     }
@@ -38,6 +45,9 @@ class MainActivity : AppCompatActivity() {
             OnBottomMenuInitializedListener {
                 mAndroidBottomBarView.showBadge(0)
                 mAndroidBottomBarView.showBadge(3)
+
+                // On init
+                mAndroidBottomBarView.bindViewPager2(mViewPager2)
             }
         }
 
@@ -45,6 +55,7 @@ class MainActivity : AppCompatActivity() {
         mAndroidBottomBarView.setOnMenuItemSelectedListener(OnMenuItemSelectedListener { index, bottomMenuItem, fromUser ->
             if (fromUser) {
                 mAndroidBottomBarView.dismissBadge(index)
+                mViewPager2.currentItem = index
                 Toast.makeText(this, "${bottomMenuItem.titleForm.title}", Toast.LENGTH_SHORT).show()
             }
         })
